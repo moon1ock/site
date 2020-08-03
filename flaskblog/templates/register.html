@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+{% block content %}
+
+    <style>
+        table,
+        th,
+        td {
+        padding: 10px;
+        border: 1px solid black;
+        border-collapse: collapse;
+        }
+    </style>
+    <h3>Here are your account credentials:</h3>
+    <p>We reccomend to keep this page open so that you don't lose your password :-) </p>
+
+    
+
+    <table>
+        <thead>
+            <tr>
+                <th colspan="2">Your Login Credentials</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Login:</td>
+                <td> <b>{{ tup[0] }}</b></td>
+            </tr>
+            <tr>
+                <td>Password:</td>
+                <td><b>{{ tup[1] }}</b></td>
+            </tr>
+            <tr>
+                <td>Your IP:</td>
+                <td> <b id="id011">Loading... </b> </td>
+            </tr>
+        </tbody>
+    </table>
+
+
+    <div class="border-top pt-3">
+        <small class="text-muted">
+            You can Sign In here: <a class="ml-2" href="{{ url_for('users.login') }}">Sign In</a>
+        </small>
+    </div>
+{% endblock content %}

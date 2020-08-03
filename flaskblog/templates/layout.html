@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+
+    {% if title %}
+        <title>DataCollectionTest - {{ title }}</title>
+    {% else %}
+        <title>DataCollectionTest</title>
+    {% endif %}
+</head>
+<body>
+    <header class="site-header">
+      <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+        <div class="container">
+          <a class="navbar-brand mr-4" href="/">DataCollectionTest</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarToggle">
+            <div class="navbar-nav mr-auto">
+              <!-- <a class="nav-item nav-link" href="{{ url_for('main.home') }}">Home</a> -->
+              <a class="nav-item nav-link" href="{{ url_for('main.about') }}">About</a>
+            </div>
+            <!-- Navbar Right Side -->
+            <div class="navbar-nav">
+              {% if current_user.is_authenticated %}
+                <a class="nav-item nav-link" href="{{ url_for('posts.new_post') }}">Pass The Test</a>
+                <a class="nav-item nav-link" href="{{ url_for('users.account') }}">Account</a>
+                <a class="nav-item nav-link" href="{{ url_for('users.logout') }}">Logout</a>
+              {% else %}
+                <a class="nav-item nav-link" href="{{ url_for('users.login') }}">Login</a>
+                <a class="nav-item nav-link" href="{{ url_for('users.register') }}">Register</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main role="main" class="container">
+      <div class="row">
+        <div class="col-md-8">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                  {{ message }}
+                </div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+          {% block content %}{% endblock %}
+        </div>
+        <div class="col-md-4">
+          <div class="content-section">
+            <h3>Your Data.</h3>
+            <p class='text-muted'>use your IP to report completion to MTurk.
+              <ul class="list-group">
+                <li class="list-group-item list-group-item-light">IP: <b id="id01">ip</b></li>
+                <li class="list-group-item list-group-item-light">City: <b id="id02">city</b> </li>
+                <li class="list-group-item list-group-item-light">County: <b id="id03">country</b></li>
+                <li class="list-group-item list-group-item-light">Browser: <b id="id06">browser</b></li>
+              </ul>
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+	<!-- <head>
+		<title>Recent Users</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<style>
+			table, th, td {
+			  border: 1px solid black;
+			}
+			table.center {
+			  margin-left: auto;
+			  margin-right: auto;
+			}
+		</style>
+	</head> -->
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script>
+			var res;
+
+			$.ajax('http://ip-api.com/json')
+				.then(
+					function success(response) {
+
+						var browser = (function (agent) {
+							switch (true) {
+								case agent.indexOf("edge") > -1:
+									return "Edge";
+								case agent.indexOf("edg") > -1:
+									return "chromium based edge (dev or canary)";
+								case agent.indexOf("opr") > -1 && !!window.opr:
+									return "Opera";
+								case agent.indexOf("chrome") > -1 && !!window.chrome:
+									return "Chrome";
+								case agent.indexOf("trident") > -1:
+									return "ie";
+								case agent.indexOf("firefox") > -1:
+									return "Firefox";
+								case agent.indexOf("safari") > -1:
+									return "Safari";
+								default:
+									return "Other";
+							}
+						})(window.navigator.userAgent.toLowerCase());
+						console.log('User\'s browser is: ', browser);
+						response.browser = browser;
+						console.log('User\'s Location Data is ', response);
+						document.getElementById("id01").innerHTML = response['query'];
+						if(document.getElementById("id011")){
+              document.getElementById("id011").innerHTML = response['query'];
+            }
+						document.getElementById("id02").innerHTML = response['city'];
+						document.getElementById("id03").innerHTML = response['country'];
+						// document.getElementById("id04").innerHTML = response['lat'];
+						// document.getElementById("id05").innerHTML = response['lon'];
+						document.getElementById("id06").innerHTML = browser;
+						$.ajax({
+							type: 'POST',
+							dataType: 'json',
+							contentType: "application/json; charset=UTF-8",
+							url: '/post',
+							data: JSON.stringify(response),
+						})
+					},
+					function fail(data, status) {
+						console.log('Request failed.  Returned status of',
+							status);
+						alert('Request failed.')
+					}
+				);
+		</script>
+
+
+</body>
+</html>
